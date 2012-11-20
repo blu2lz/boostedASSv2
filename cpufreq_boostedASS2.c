@@ -120,6 +120,11 @@ static unsigned int sample_rate_jiffies;
 /*************** End of tunables ***************/
 
 
+static int values[10];
+static int nr_values;
+module_param_array(values, int, &nr_values, 0444);
+
+
 static void (*pm_idle_old)(void);
 static atomic_t active_count = ATOMIC_INIT(0);
 
@@ -803,116 +808,61 @@ static struct early_suspend smartass_power_suspend = {
 #endif
 };
 
-static const char *FILE_OVERCLOCK_CONF = "/system/bootmenu/config/overclock.conf";
-
-struct gov_config
-{
- const char *name;
- int value;
-};
-
-struct gov_config gov[] = {
-  { "bstass_awake_ideal_freq", 0 },
-  { "bstass_down_rate_us", 0 },
-  { "bstass_max_cpu_load", 0 },
-  { "bstass_min_cpu_load", 0 },
-  { "bstass_ramp_down_step", 0 },
-  { "bstass_ramp_up_step", 0 },
-  { "bstass_sample_rate_jiffies", 0 },
-  { "bstass_sleep_ideal_freq", 0 },
-  { "bstass_sleep_wakeup_freq", 0 },
-  { "bstass_up_rate_us", 0 },
-  { NULL, 0 },
-};
-
-int get_gov_value(char* name) {
-  struct gov_config *config;
-
-  for (config = gov; config->name != NULL; ++config) {
-      if (!strcmp(config->name, name)) {
-        return config->value;
-      }
-    }
-  return -1;
-}
-
-int get_gov_config(void) {
-  FILE *fp;
-  char name[255];
-  struct gov_config *config;
-
-  if ((fp = fopen(FILE_OVERCLOCK_CONF, "r")) == NULL) {
-    return 1;
-  }
-
-  while((fscanf(fp, "%s", name)) != EOF) {
-
-    for (config = gov; config->name != NULL; ++config) {
-      if (!strcmp(config->name, name)) {
-        fscanf(fp, "%d", &config->value);
-      }
-    }
-  }
-  fclose(fp);
-  return 0;
-}
-
 static int __init cpufreq_smartass_init(void)
 {
 	unsigned int i;
 	struct smartass_info_s *this_smartass;
         SYMSEARCH_BIND_FUNCTION_TO(cpufreq_smartass2, nr_running, nr_running_k);
 	debug_mask = 0;
-	get_gov_config();
-	if(get_gov_value("up_rate_us")==0) {
-	  up_rate_us = DEFAULT_UP_RATE_US;
-	} else {
-	  up_rate_us = get_gov_value("up_rate_us");
-	}
-	if(get_gov_value("down_rate_us")==0) {
-	  down_rate_us = DEFAULT_DOWN_RATE_US;
-	} else {
-	  down_rate_us = get_gov_value("down_rate_us");
-	}
-	if(get_gov_value("sleep_ideal_freq")==0) {
-	  sleep_ideal_freq = DEFAULT_SLEEP_IDEAL_FREQ;
-	} else {
-	  sleep_ideal_freq = get_gov_value("sleep_ideal_freq");
-	}
-	if(get_gov_value("sleep_wakeup_freq")==0) {
-	  sleep_wakeup_freq = DEFAULT_SLEEP_WAKEUP_FREQ;
-	} else {
-	  sleep_wakeup_freq = get_gov_value("sleep_wakeup_freq");
-	}
-	if(get_gov_value("awake_ideal_freq")==0) {
+	if(values[0]==0) {
 	  awake_ideal_freq = DEFAULT_AWAKE_IDEAL_FREQ;
 	} else {
-	  awake_ideal_freq = get_gov_value("awake_ideal_freq");
+	  awake_ideal_freq = values[0];
 	}
-	if(get_gov_value("sample_rate_jiffies")==0) {
-	  sample_rate_jiffies = DEFAULT_SAMPLE_RATE_JIFFIES;
+	if(values[1]==0) {
+	  down_rate_us = DEFAULT_DOWN_RATE_US;
 	} else {
-	  sample_rate_jiffies = get_gov_value("sample_rate_jiffies");
+	  down_rate_us = values[1];
 	}
-	if(get_gov_value("ramp_up_step")==0) {
-	  ramp_up_step = DEFAULT_RAMP_UP_STEP;
-	} else {
-	  ramp_up_step = get_gov_value("ramp_up_step");
-	}
-	if(get_gov_value("ramp_down_step")==0) {
-	  ramp_down_step = DEFAULT_RAMP_DOWN_STEP;
-	} else {
-	  ramp_down_step = get_gov_value("ramp_down_step");
-	}
-	if(get_gov_value("max_cpu_load")==0) {
+	if(values[2]==0) {
 	  max_cpu_load = DEFAULT_MAX_CPU_LOAD;
 	} else {
-	  max_cpu_load = get_gov_value("max_cpu_load");
+	  max_cpu_load = values[2];
 	}
-	if(get_gov_value("min_cpu_load")==0) {
+	if(values[3]==0) {
 	  min_cpu_load = DEFAULT_MIN_CPU_LOAD;
 	} else {
-	  min_cpu_load = get_gov_value("min_cpu_load");
+	  min_cpu_load = values[3];
+	}
+	if(values[4]==0) {
+	  ramp_down_step = DEFAULT_RAMP_DOWN_STEP;
+	} else {
+	  ramp_down_step = values[4];
+	}
+	if(values[5]==0) {
+	  ramp_up_step = DEFAULT_RAMP_UP_STEP;
+	} else {
+	  ramp_up_step = values[5];
+	}
+	if(values[6]==0) {
+	  sample_rate_jiffies = DEFAULT_SAMPLE_RATE_JIFFIES;
+	} else {
+	  sample_rate_jiffies = values[6];
+	}
+	if(values[7]==0) {
+	  sleep_ideal_freq = DEFAULT_SLEEP_IDEAL_FREQ;
+	} else {
+	  sleep_ideal_freq = values[7];
+	}
+	if(values[8]==0) {
+	  sleep_wakeup_freq = DEFAULT_SLEEP_WAKEUP_FREQ;
+	} else {
+	  sleep_wakeup_freq = values[8];
+	}
+	if(values[9]==0) {
+	  up_rate_us = DEFAULT_UP_RATE_US;
+	} else {
+	  up_rate_us = values[9];
 	}
 
 	spin_lock_init(&cpumask_lock);
@@ -965,6 +915,6 @@ static void __exit cpufreq_smartass_exit(void)
 
 module_exit(cpufreq_smartass_exit);
 
-MODULE_AUTHOR ("Erasmux (ported by firstEncounter)(modified by BMc08GT)");
+MODULE_AUTHOR ("Erasmux (ported by firstEncounter)(modified by BMc08GT & blu2lz)");
 MODULE_DESCRIPTION ("'cpufreq_smartass2' - A smart cpufreq governor");
 MODULE_LICENSE ("GPL");
