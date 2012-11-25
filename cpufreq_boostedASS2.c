@@ -814,52 +814,52 @@ static int __init cpufreq_smartass_init(void)
 	struct smartass_info_s *this_smartass;
         SYMSEARCH_BIND_FUNCTION_TO(cpufreq_smartass2, nr_running, nr_running_k);
 	debug_mask = 0;
-	if(values[0]==0) {
+	if(values[0]<0) {
 	  awake_ideal_freq = DEFAULT_AWAKE_IDEAL_FREQ;
 	} else {
 	  awake_ideal_freq = values[0];
 	}
-	if(values[1]==0) {
+	if(values[1]<0) {
 	  down_rate_us = DEFAULT_DOWN_RATE_US;
 	} else {
 	  down_rate_us = values[1];
 	}
-	if(values[2]==0) {
+	if(values[2]<0) {
 	  max_cpu_load = DEFAULT_MAX_CPU_LOAD;
 	} else {
 	  max_cpu_load = values[2];
 	}
-	if(values[3]==0) {
+	if(values[3]<0) {
 	  min_cpu_load = DEFAULT_MIN_CPU_LOAD;
 	} else {
 	  min_cpu_load = values[3];
 	}
-	if(values[4]==0) {
+	if(values[4]<0) {
 	  ramp_down_step = DEFAULT_RAMP_DOWN_STEP;
 	} else {
 	  ramp_down_step = values[4];
 	}
-	if(values[5]==0) {
+	if(values[5]<0) {
 	  ramp_up_step = DEFAULT_RAMP_UP_STEP;
 	} else {
 	  ramp_up_step = values[5];
 	}
-	if(values[6]==0) {
+	if(values[6]<0) {
 	  sample_rate_jiffies = DEFAULT_SAMPLE_RATE_JIFFIES;
 	} else {
 	  sample_rate_jiffies = values[6];
 	}
-	if(values[7]==0) {
+	if(values[7]<0) {
 	  sleep_ideal_freq = DEFAULT_SLEEP_IDEAL_FREQ;
 	} else {
 	  sleep_ideal_freq = values[7];
 	}
-	if(values[8]==0) {
+	if(values[8]<0) {
 	  sleep_wakeup_freq = DEFAULT_SLEEP_WAKEUP_FREQ;
 	} else {
 	  sleep_wakeup_freq = values[8];
 	}
-	if(values[9]==0) {
+	if(values[9]<0) {
 	  up_rate_us = DEFAULT_UP_RATE_US;
 	} else {
 	  up_rate_us = values[9];
